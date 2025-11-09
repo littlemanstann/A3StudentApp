@@ -48,14 +48,15 @@ public class App {
                     case 4:
                         System.out.println("Goodbye!");
                         scanner.close();
+                        conn.close();
                         return;
                     default:
                         System.out.println("Invalid choice. Try again.");
                 }
             }
-            conn.close();
+        
         // The catch block handles any SQL exceptions that may occur during the connection or query execution    
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) { // Removed ClassNotFoundException as it's not needed for modern JDBC
             e.printStackTrace();
         }
     }
@@ -64,21 +65,55 @@ public class App {
         String query = "SELECT * FROM students";
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
-            System.out.println("ID | Name | Age");
+            System.out.println("student_id | first_name | last_name | enrollment_date");
             while (rs.next()) {
-                System.out.printf("%d | %s | %d%n", rs.getInt("id"), rs.getString("name"), rs.getInt("age"));
+                System.out.printf("%10d | %10s | %9s | %15s%n",
+                        rs.getInt("student_id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getDate("enrollment_date").toString());
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
 
     private static void addStudent(Connection conn, Scanner scanner) {
-        String insertSQL = "INSERT INTO employees (id, name, age) VALUES (?, ?, ?)";
+        String insertSQL = "INSERT INTO students (student_id, first_name, last_name, enrollment_date) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
-            pstmt.setInt(1, 1);
-            pstmt.setString(2, "Jane");
-            pstmt.setInt(3, 28);
+            System.out.print("Enter student ID: ");
+            pstmt.setInt(1, scanner.nextInt());
+            scanner.nextLine(); // consume newline
+
+            System.out.print("Enter first name: ");
+            pstmt.setString(2, scanner.nextLine());
+
+            System.out.print("Enter last name: ");
+            pstmt.setString(3, scanner.nextLine());
+
+            System.out.print("Enter enrollment date (YYYY-MM-DD): ");
+            pstmt.setDate(4, Date.valueOf(scanner.nextLine()));
+
             pstmt.executeUpdate();
-            System.out.println("Data inserted using PreparedStatement.");
+            System.out.println("Student added successfully.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void deleteStudent(Connection conn, Scanner scanner) {
+        String deleteSQL = "DELETE FROM students WHERE student_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(deleteSQL)) {
+            System.out.print("Enter student ID to delete: ");
+            pstmt.setInt(1, scanner.nextInt());
+            scanner.nextLine(); // consume newline
+
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Student deleted successfully.");
+            } else {
+                System.out.println("No student found with the given ID.");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

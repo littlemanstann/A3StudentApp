@@ -20,4 +20,7 @@
       <version>42.7.3</version>
     </dependency>
   </dependencies>
+
+  <!-- Plugin to run the main class -->
+
 </project>
