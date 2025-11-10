@@ -14,13 +14,12 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- Plugin for PostgreSQL -->
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <version>42.7.3</version>
     </dependency>
   </dependencies>
-
-  <!-- Plugin to run the main class -->
-
 </project>
