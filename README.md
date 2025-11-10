@@ -11,7 +11,7 @@ Command to run the application:
 
 *NOTE: Use cmd and not Windows Powershell*
 
-### LINK TO DEMO IDEO: https://youtu.be/mMsysgZRaeo
+### LINK TO DEMO VIDEO: https://youtu.be/mMsysgZRaeo
 
 ### Specs:
 - JDBC 42.7.3 
